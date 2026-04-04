@@ -1,0 +1,104 @@
+import logging
+from email.utils import parsedate_to_datetime
+
+import feedparser
+from newspaper import Article
+
+from fin_news_pipeline.utils import RawArticle, Source
+from .base import NewsProvider
+
+logger = logging.getLogger(__name__)
+
+class YahooProvider(NewsProvider):
+    """
+    Yahoo RSS news provider.
+
+    Data flow:
+    1. `fetch()` -> retrieves articles via feedparser
+    2. For each entry:
+        - `_download_article()` -> uses newspaper4k to fetch full body text
+        - `_adapt()` -> maps raw feed fields to RawArticle dataclass
+
+    Expected feed structure:
+    {
+        "status": int,                              # HTTP status
+        "bozo": bool,                               # malformed XML flag
+        "entries": [
+            {
+                "id": str,                          # Yahoo unique article id
+                "link": str,                        # URL of the article
+                "title": str,
+                "summary": str,
+                "published": str                    # Email format (e.g. 'Thu, 02 Apr 2026 18:37:15 GMT')
+                "published_parsed": struct_time     # uses time.struct_time format without tz info
+            }
+        ]
+    }
+    """
+    def __init__(self, base_url: str | None = None):
+        self.base_url = base_url or "https://feeds.finance.yahoo.com/rss/2.0/headline?s=yhoo,goog&region=US&lang=en-US"
+        
+    def _adapt(
+            self,
+            entry: dict,
+            body_text: str | None
+    ) -> RawArticle | None:
+        """Maps a single raw RSS feed entry to a RawArticle dataclass."""
+        try:
+            pub_date_str = entry.get("published")
+            published_at = parsedate_to_datetime(pub_date_str) if pub_date_str else None
+
+            entry_id = entry.get("id") or entry.get("link")
+            if not entry_id:
+                logger.warning("Skipping entry missing both 'id' and 'link'.")
+                return None
+            
+            return RawArticle(
+                id=f"Yahoo_{entry_id}",
+                source=Source.YAHOO,
+                headline=entry.get("title", "No Title"),
+                summary=entry.get("summary", "No Summary"),
+                body=body_text,
+                url=entry.get("link", ""),
+                published_at=published_at,
+            )
+        except Exception as e:
+            logger.error(f"Failed to adapt feed entry: {entry.get('title', 'No Title')}. Error: {e}")
+            return None
+        
+    def fetch(self) -> list[RawArticle]:
+        feed = feedparser.parse(self.base_url)
+
+        status= feed.get("status")
+        if isinstance(status, int) and not (200 <= status < 300):
+            logger.error(f"Server error fetching Yahoo feed. HTTP Status: {status}")
+            return []
+        
+        if feed.get("bozo") == 1:
+            logger.warning(f"Malformed XML detected in Yahoo feed. Attempting to parse anyway...")
+
+        articles = []
+        entries = feed.get("entries", [])
+        if not isinstance(entries, list): entries = [] # silence pylance
+
+        for entry in entries:
+            link = entry.get("link")
+            body_text: str | None = None
+            if isinstance(link, str):
+                body_text = self._download_article(link)
+
+            article = self._adapt(entry, body_text)
+            if article:
+                articles.append(article)
+
+        return articles
+    
+    def _download_article(self, url: str) -> str | None:
+        article = Article(url)
+        try:
+            article.download()
+            article.parse()
+            return article.text
+        except Exception as e:
+            logger.warning(f"Unable to download body text for {url}. Error: {e}")
+            return None

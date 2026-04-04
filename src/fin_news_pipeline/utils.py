@@ -6,8 +6,8 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 class Source(str, Enum):
-    # REUTERS = "Reuters"
     CNBC = "Cnbc"
+    YAHOO = "Yahoo"
 
 @dataclass
 class RawArticle:
