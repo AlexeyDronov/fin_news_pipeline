@@ -6,7 +6,8 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 class Source(str, Enum):
-    REUTERS = "Reuters"
+    # REUTERS = "Reuters"
+    CNBC = "Cnbc"
 
 @dataclass
 class RawArticle:
@@ -16,7 +17,7 @@ class RawArticle:
     summary: str | None
     body: str | None
     url: str
-    published_at: datetime
+    published_at: datetime | None
     fetched_at: datetime = field(default_factory=utc_now)
 
     def to_dict(self) -> dict:
