@@ -10,7 +10,8 @@ class TestRawArticle:
         d = article.to_dict()
 
         assert d == {
-            "id": article.id,
+            "provider_id": article.id,
+            "canonical_id": article.canonical_id,
             "source": article.source.value,
             "headline": article.headline,
             "summary": article.summary,
@@ -34,7 +35,7 @@ class TestRawArticle:
         assert article.body == d["body"] == body
 
     def test_soure_enum_serialises_to_string_value(self, raw_article_factory: RawArticleFactory):
-        article = raw_article_factory(source=Source.REUTERS)
+        article = raw_article_factory(source=Source.YAHOO)
         d = article.to_dict()
 
         assert d["source"] == "Reuters"
@@ -52,8 +53,9 @@ class TestRawArticle:
     def test_default_fetched_at_is_set_by_default_factory(self):
         before = datetime.now(timezone.utc) - timedelta(seconds=1)
         article = RawArticle(
-            id="test-001",
-            source=Source.REUTERS,
+            provider_id="test-001",
+            canonical_id="unique-001",
+            source=Source.YAHOO,
             headline="headline",
             summary=None,
             body=None,
@@ -123,8 +125,9 @@ class TestEnrichedArticleToDict:
     def test_default_processed_at_is_set_by_default_factory(self):
         before = datetime.now(timezone.utc) - timedelta(seconds=1)
         raw = RawArticle(
-            id="test-001",
-            source=Source.REUTERS,
+            provider_id="test-001",
+            canonical_id="unique-001",
+            source=Source.YAHOO,
             headline="headline",
             summary=None,
             body=None,

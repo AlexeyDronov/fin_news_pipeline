@@ -65,7 +65,7 @@ class CNBCProvider(NewsProvider):
                 return None
             
             return RawArticle(
-                id=f"CNBC_{entry_id}",
+                provider_id=f"CNBC_{entry_id}",
                 canonical_id=build_article_id(link, title),
                 source=Source.CNBC,
                 headline=title,

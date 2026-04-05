@@ -10,7 +10,7 @@ class Source(str, Enum):
 
 @dataclass
 class RawArticle:
-    id: str
+    provider_id: str
     canonical_id: str
     
     source: Source

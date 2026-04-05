@@ -56,7 +56,7 @@ class YahooProvider(NewsProvider):
                 return None
             
             return RawArticle(
-                id=f"Yahoo_{entry_id}",
+                provider_id=f"Yahoo_{entry_id}",
                 canonical_id=build_article_id(link, title),
                 source=Source.YAHOO,
                 headline=title,

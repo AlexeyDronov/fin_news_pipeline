@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from fin_news_pipeline.utils import RawArticle
+from fin_news_pipeline.models import RawArticle
 
 class NewsProvider(ABC):
     @abstractmethod

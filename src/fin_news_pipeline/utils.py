@@ -2,8 +2,6 @@ import hashlib
 from datetime import datetime, timezone
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
-from fin_news_pipeline.models import RawArticle
-
 def utc_now() -> datetime:
     """Returns the current timestamp in UTC to ensure database consistency."""
     return datetime.now(timezone.utc)

@@ -13,7 +13,8 @@ class EnrichedArticleFactory(Protocol):
 def raw_article_factory() -> RawArticleFactory:
     def _make(**overrides):
         defaults = dict(
-            id="test-001",
+            provider_id="test-001",
+            canonical_id="unique-001",
             source=Source.YAHOO,
             headline="Test headline",
             summary="Test summary",
