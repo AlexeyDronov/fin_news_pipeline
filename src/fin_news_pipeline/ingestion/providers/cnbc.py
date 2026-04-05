@@ -95,12 +95,7 @@ class CNBCProvider(NewsProvider):
         if not isinstance(entries, list): entries = [] # silence pylance
 
         for entry in entries:
-            link = entry.get("link")
-            body_text: str | None = None
-            if isinstance(link, str):
-                body_text = self._download_article(link)
-
-            article = self._adapt(entry, body_text)
+            article = self._adapt(entry)
             if article:
                 articles.append(article)
 
@@ -112,13 +107,3 @@ class CNBCProvider(NewsProvider):
         for branch in self.cnbc_branches:
             all_articles.extend(self.fetch_one_branch(branch))
         return all_articles
-    
-    def _download_article(self, url: str) -> str | None:
-        article = Article(url)
-        try:
-            article.download()
-            article.parse()
-            return article.text
-        except Exception as e:
-            logger.warning(f"Unable to download body text for {url}. Error: {e}")
-            return None
