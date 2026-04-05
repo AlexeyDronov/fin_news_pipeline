@@ -22,3 +22,6 @@ CREATE TABLE IF NOT EXISTS article_enrichments (
     FOREIGN KEY (canonical_id) REFERENCES raw_articles(canonical_id)
         ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS idx_raw_articles_body_status ON raw_articles(body_status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_raw_articles_provider_id ON raw_articles(provider_id);

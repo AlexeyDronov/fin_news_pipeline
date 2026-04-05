@@ -19,9 +19,7 @@ class CNBCProvider(NewsProvider):
     Data flow:
     1. `fetch()` -> calls `fetch_one_branch()` for each financial branch (business, earnings, finance)
     2. `fetch_one_branch()` -> downloads raw RSS feeds via feedparser
-    3. For each entry:
-        - `_download_article()` -> uses newspaper4k to fetch full body text
-        - `_adapt()` -> maps raw feed fields to RawArticle dataclass
+    3. For each entry `_adapt()` -> maps raw feed fields to RawArticle dataclass
 
     Expected feed structure:
     {

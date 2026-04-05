@@ -1,12 +1,19 @@
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import Enum
+import json
 
 from .utils import utc_now
 
 class Source(str, Enum):
     CNBC = "Cnbc"
     YAHOO = "Yahoo"
+
+class BodyStatus(str, Enum):
+    PENDING = "pending"
+    FETCHED = "fetched"
+    FAILED = "failed"
+    SKIPPED = "skipped"
 
 @dataclass
 class RawArticle:
@@ -22,12 +29,12 @@ class RawArticle:
     published_at: datetime | None
     fetched_at: datetime = field(default_factory=utc_now)
 
-    body_status: str = "pending"
+    body_status: BodyStatus = BodyStatus.PENDING
     body_attempts: int = 0
 
     def to_dict(self) -> dict:
         d = asdict(self)
-        d["published_at"] = self.published_at.isoformat()
+        d["published_at"] = self.published_at.isoformat() if self.published_at else None
         d["fetched_at"] = self.fetched_at.isoformat()
         d["source"] = self.source.value
         return d
@@ -44,13 +51,12 @@ class EnrichedArticle:
 
     processed_at: datetime = field(default_factory=utc_now)
 
-    def to_dict(self) -> dict:
-        base = self.article.to_dict()
-        base.update({
-            "tickers": self.tickers,
+    def to_enriched_dict(self) -> dict:
+        return {
+            "canonical_id": self.article.canonical_id,
+            "tickers": json.dumps(self.tickers),
             "sentiment_score": self.sentiment_score,
             "sentiment_label": self.sentiment_label,
-            "entities": self.entities,
+            "entities": json.dumps(self.entities),
             "processed_at": self.processed_at.isoformat()
-        })
-        return base
+        }
