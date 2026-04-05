@@ -11,13 +11,19 @@ class Source(str, Enum):
 @dataclass
 class RawArticle:
     id: str
+    canonical_id: str
+    
     source: Source
     headline: str
     summary: str | None
     body: str | None
     url: str
+
     published_at: datetime | None
     fetched_at: datetime = field(default_factory=utc_now)
+
+    body_status: str = "pending"
+    body_attempts: int = 0
 
     def to_dict(self) -> dict:
         d = asdict(self)

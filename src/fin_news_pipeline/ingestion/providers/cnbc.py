@@ -3,9 +3,9 @@ from email.utils import parsedate_to_datetime
 from typing import Literal
 
 import feedparser
-from newspaper import Article
 
 from fin_news_pipeline.models import RawArticle, Source
+from fin_news_pipeline.utils import build_article_id
 from .base import NewsProvider
 
 logger = logging.getLogger(__name__)
@@ -49,8 +49,7 @@ class CNBCProvider(NewsProvider):
         
     def _adapt(
             self,
-            entry: dict,
-            body_text: str | None
+            entry: dict
     ) -> RawArticle | None:
         """Maps a single raw RSS feed entry to a RawArticle dataclass."""
         try:
@@ -58,17 +57,21 @@ class CNBCProvider(NewsProvider):
             published_at = parsedate_to_datetime(pub_date_str) if pub_date_str else None
 
             entry_id = entry.get("id") or entry.get("link")
+            title = entry.get("title", "No Title")
+            link = entry.get("link", "")
+
             if not entry_id:
                 logger.warning("Skipping entry missing both 'id' and 'link'.")
                 return None
             
             return RawArticle(
                 id=f"CNBC_{entry_id}",
+                canonical_id=build_article_id(link, title),
                 source=Source.CNBC,
-                headline=entry.get("title", "No Title"),
+                headline=title,
                 summary=entry.get("summary", "No Summary"),
-                body=body_text,
-                url=entry.get("link", ""),
+                body=None,
+                url=link,
                 published_at=published_at,
             )
         except Exception as e:
