@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime, timezone, timedelta
-from fin_news_pipeline.utils import RawArticle, EnrichedArticle, Source
+from fin_news_pipeline.models import RawArticle, EnrichedArticle, Source
 from conftest import RawArticleFactory, EnrichedArticleFactory
 
 

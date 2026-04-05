@@ -4,7 +4,7 @@ from email.utils import parsedate_to_datetime
 import feedparser
 from newspaper import Article
 
-from fin_news_pipeline.utils import RawArticle, Source
+from fin_news_pipeline.models import RawArticle, Source
 from .base import NewsProvider
 
 logger = logging.getLogger(__name__)

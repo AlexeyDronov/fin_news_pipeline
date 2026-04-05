@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime, timezone
 from typing import Protocol
-from fin_news_pipeline.utils import RawArticle, EnrichedArticle, Source
+from fin_news_pipeline.models import RawArticle, EnrichedArticle, Source
 
 class RawArticleFactory(Protocol):
     def __call__(self, **overrides) -> RawArticle: ...
@@ -14,7 +14,7 @@ def raw_article_factory() -> RawArticleFactory:
     def _make(**overrides):
         defaults = dict(
             id="test-001",
-            source=Source.REUTERS,
+            source=Source.YAHOO,
             headline="Test headline",
             summary="Test summary",
             body="Test body",
