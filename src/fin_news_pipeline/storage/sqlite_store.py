@@ -33,10 +33,10 @@ class DBManager:
         query = """
         INSERT INTO raw_articles (
             canonical_id, provider_id, source, headline, summary, body, url,
-            published_at, fetched_at, body_status, body_attempts
+            is_downloadable, published_at, fetched_at, status, body_attempts, body_last_error
         ) VALUES (
             :canonical_id, :provider_id, :source, :headline, :summary, :body, :url,
-            :published_at, :fetched_at, :body_status, :body_attempts
+            :is_downloadable, :published_at, :fetched_at, :status, :body_attempts, :body_last_error
         )
         ON CONFLICT (canonical_id) DO NOTHING;
         """

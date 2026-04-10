@@ -9,16 +9,15 @@ class Source(str, Enum):
     CNBC = "Cnbc"
     YAHOO = "Yahoo"
 
-class BodyStatus(str, Enum):
+class Status(str, Enum):
     PENDING = "pending"
-    FETCHED = "fetched"
+    PROCESSED = "processed"
     FAILED = "failed"
-    SKIPPED = "skipped"
 
 @dataclass
 class RawArticle:
-    provider_id: str
     canonical_id: str
+    provider_id: str
     
     source: Source
     headline: str
@@ -26,17 +25,21 @@ class RawArticle:
     body: str | None
     url: str
 
+    is_downloadable: bool
+
     published_at: datetime | None
     fetched_at: datetime = field(default_factory=utc_now)
 
-    body_status: BodyStatus = BodyStatus.PENDING
+    status: Status = Status.PENDING
     body_attempts: int = 0
+    body_last_error: str = "" # last error when trying to download
 
     def to_dict(self) -> dict:
         d = asdict(self)
         d["published_at"] = self.published_at.isoformat() if self.published_at else None
         d["fetched_at"] = self.fetched_at.isoformat()
         d["source"] = self.source.value
+        d["status"] = self.status.value
         return d
     
 @dataclass

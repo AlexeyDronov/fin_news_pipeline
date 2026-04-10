@@ -63,13 +63,14 @@ class CNBCProvider(NewsProvider):
                 return None
             
             return RawArticle(
-                provider_id=f"CNBC_{entry_id}",
                 canonical_id=build_article_id(link, title),
+                provider_id=f"CNBC_{entry_id}",
                 source=Source.CNBC,
                 headline=title,
                 summary=entry.get("summary", "No Summary"),
                 body=None,
                 url=link,
+                is_downloadable=True,
                 published_at=published_at,
             )
         except Exception as e:
