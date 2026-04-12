@@ -11,6 +11,7 @@ class Source(str, Enum):
 
 class Status(str, Enum):
     PENDING = "pending"
+    PROCESSING = "processing"
     PROCESSED = "processed"
     FAILED = "failed"
 

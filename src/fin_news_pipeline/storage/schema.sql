@@ -6,10 +6,12 @@ CREATE TABLE IF NOT EXISTS raw_articles (
     summary TEXT,
     body TEXT,
     url TEXT,
+    is_downloadable INTEGER,
     published_at TIMESTAMP,
     fetched_at TIMESTAMP,
-    body_status TEXT,
-    body_attempts INTEGER
+    status TEXT,
+    body_attempts INTEGER,
+    body_last_error TEXT
 );
 
 CREATE TABLE IF NOT EXISTS article_enrichments (
@@ -23,5 +25,5 @@ CREATE TABLE IF NOT EXISTS article_enrichments (
         ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_raw_articles_body_status ON raw_articles(body_status);
+CREATE INDEX IF NOT EXISTS idx_raw_articles_status ON raw_articles(status);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_raw_articles_provider_id ON raw_articles(provider_id);
