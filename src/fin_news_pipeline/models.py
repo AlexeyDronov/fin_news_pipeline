@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 import json
 
-from .utils import utc_now
+from .utils.utils import utc_now
 
 class Source(str, Enum):
     CNBC = "Cnbc"

@@ -5,7 +5,7 @@ from typing import Literal
 import feedparser
 
 from fin_news_pipeline.models import RawArticle, Source
-from fin_news_pipeline.utils import build_article_id
+from fin_news_pipeline.utils.utils import build_article_id
 from .base import NewsProvider
 
 logger = logging.getLogger(__name__)
