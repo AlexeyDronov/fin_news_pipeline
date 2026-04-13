@@ -35,7 +35,7 @@ class RawArticle:
     body_attempts: int = 0
     body_last_error: str = "" # last error when trying to download
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str | bool | None]:
         d = asdict(self)
         d["published_at"] = self.published_at.isoformat() if self.published_at else None
         d["fetched_at"] = self.fetched_at.isoformat()
@@ -49,13 +49,13 @@ class EnrichedArticle:
 
     # NLP step
     tickers: list[str] = field(default_factory=list)
-    sentiment_score: float | None = None
+    sentiment_score: float | None = None # TODO: consider if None can be dropped
     sentiment_label: str | None = None
     entities: list[str] = field(default_factory=list)
 
     processed_at: datetime = field(default_factory=utc_now)
 
-    def to_enriched_dict(self) -> dict:
+    def to_enriched_dict(self) -> dict[str, str | float | None]:
         return {
             "canonical_id": self.article.canonical_id,
             "tickers": json.dumps(self.tickers),

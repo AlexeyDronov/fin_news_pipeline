@@ -66,8 +66,8 @@ class YahooProvider(NewsProvider):
                 is_downloadable=True,
                 published_at=published_at,
             )
-        except Exception as e:
-            logger.error(f"Failed to adapt feed entry: {entry.get('title', 'No Title')}. Error: {e}")
+        except Exception:
+            logger.exception(f"Failed to adapt feed entry: {entry.get('title', 'No Title')}.")
             return None
         
     def fetch(self) -> list[RawArticle]:

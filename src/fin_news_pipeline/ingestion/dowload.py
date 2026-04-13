@@ -13,8 +13,8 @@ class ArticleDownloader:
             article.download()
             article.parse()
             return article.text
-        except Exception as e:
-            logger.warning(f"Unable to download body text for {url}. Error: {e}")
+        except Exception:
+            logger.warning(f"Unable to download body text for {url}. Error:", exc_info=True)
             return None
         
     def download_article_batch(self, articles: list[RawArticle], db: DBManager) -> list[RawArticle]:
@@ -34,9 +34,9 @@ class ArticleDownloader:
                 if article_to_download.text:
                     article.body = article_to_download.text
             except Exception as e:
-                logger.warning(f"Unable to download body text for {article.url}. Error: {e}")
+                logger.warning(f"Unable to download body text for {article.url}. Error:", exc_info=True)
                 article.body_attempts += 1
-                article.body_last_error = e
+                article.body_last_error = str(e)
                 article.status = Status.FAILED
                 # TODO: push failed articles back to db and remove them from the pipeline
                 continue
